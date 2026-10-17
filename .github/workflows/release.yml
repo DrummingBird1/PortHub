@@ -41,9 +41,28 @@ jobs:
       - run: npm ci
       - run: npm run check
       - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: PortHub ${{ github.ref_name }}
+          tagName: v__VERSION__
+          releaseName: PortHub v__VERSION__
           releaseDraft: true
           prerelease: true
           args: --bundles ${{ matrix.bundles }}
+
+  checksums:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Add SHA256SUMS to the draft release
+        run: |
+          version=$(gh api repos/${{ github.repository }}/contents/package.json -q .content | base64 -d | jq -r .version)
+          mkdir assets && cd assets
+          gh release download "v$version" -R ${{ github.repository }} -p '*.exe' -p '*.deb' -p '*.AppImage'
+          sha256sum * > SHA256SUMS
+          cat SHA256SUMS
+          gh release upload "v$version" SHA256SUMS --clobber -R ${{ github.repository }}
