@@ -1,0 +1,39 @@
+# dependencies and build output
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/
+*.tsbuildinfo
+*.pdb
+
+# local test folders and logs
+.test-*/
+.test-*
+*.log
+
+# secrets and signing keys (never commit)
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*.minisign
+*.sig
+tauri-updater*
+*.private
+
+# game files (never commit)
+*.z64
+*.n64
+*.v64
+*.iso
+*.otr
+*.o2r
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/

@@ -1,0 +1,25 @@
+{
+  "tag_name": "9.3.0",
+  "body": "fixture",
+  "html_url": "https://github.com/HarbourMasters/Shipwright/releases/tag/9.3.0",
+  "assets": [
+    {
+      "name": "SoH-Dewey-Alpha-Mac.zip",
+      "browser_download_url": "https://github.com/HarbourMasters/Shipwright/releases/download/9.3.0/SoH-Dewey-Alpha-Mac.zip",
+      "size": 49479046,
+      "digest": "sha256:dc4c146f469c11cb8c87cbf6f541721b4a65887a1f0fae1407785c7b6e600110"
+    },
+    {
+      "name": "SoH-Dewey-Alpha-Win64.zip",
+      "browser_download_url": "https://github.com/HarbourMasters/Shipwright/releases/download/9.3.0/SoH-Dewey-Alpha-Win64.zip",
+      "size": 72814046,
+      "digest": "sha256:bf46cfc41be17f3b63901db46dac46ac2a63ed3851aa13e3ba6c9ec5d0ac2632"
+    },
+    {
+      "name": "SoH-Dewey-Alpha.appimage",
+      "browser_download_url": "https://github.com/HarbourMasters/Shipwright/releases/download/9.3.0/SoH-Dewey-Alpha.appimage",
+      "size": 32113856,
+      "digest": "sha256:8507bb70413e130e452ebaf5f156bfd78013ee0144364b7968680e8cf064a0fa"
+    }
+  ]
+}

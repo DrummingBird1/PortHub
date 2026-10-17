@@ -1,0 +1,27 @@
+name: Bug report
+description: Something in PortHub doesn't work
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Please don't attach ROMs or game files, or links to them."
+  - type: input
+    id: version
+    attributes: { label: PortHub version, placeholder: "0.0.1" }
+    validations: { required: true }
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options: [Windows 10/11, Linux (desktop), Steam Deck, Other]
+    validations: { required: true }
+  - type: input
+    id: port
+    attributes: { label: Port, placeholder: "Ship of Harkinian" }
+  - type: textarea
+    id: what
+    attributes: { label: What happened, description: Steps to reproduce, expected vs actual. }
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes: { label: Error message / logs, render: text }

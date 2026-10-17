@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "id": "zelda64recomp",
+  "name": "Zelda 64: Recompiled",
+  "game": { "title": "The Legend of Zelda: Majora's Mask", "console": "n64" },
+  "description": "Static recompilation of Majora's Mask (RT64 renderer). Loads assets directly from the US ROM; no separate extraction step.",
+  "repo": "Zelda64Recomp/Zelda64Recomp",
+  "license": "GPL-3.0",
+  "romRequirements": [
+    {
+      "label": "NTSC-U 1.0 (US)",
+      "format": "z64",
+      "recommended": true,
+      "hashes": { "sha1": "d6133ace5afaa0882cf214cf88daba39e266c078" }
+    }
+  ],
+  "releases": {
+    "channel": "latest",
+    "assets": [
+      {
+        "os": "windows",
+        "arch": "x64",
+        "pattern": "^Zelda64Recompiled-.*-Windows\\.zip$",
+        "kind": "zip",
+        "pinned": {
+          "tag": "v1.2.2",
+          "sha256": "d02b95f1cf5e4d44d6587fa6136c6db521f61aa41ba8700c05f91bea8b0a26d0"
+        }
+      },
+      {
+        "os": "linux",
+        "arch": "x64",
+        "pattern": "^Zelda64Recompiled-.*-Linux-X64\\.zip$",
+        "kind": "zip",
+        "pinned": {
+          "tag": "v1.2.2",
+          "sha256": "de8b19cdb4e3ad0c10fd6d8127f7a6cc2a9eba106d89c753439178b718887c42"
+        }
+      },
+      {
+        "os": "linux",
+        "arch": "arm64",
+        "pattern": "^Zelda64Recompiled-.*-Linux-ARM64\\.zip$",
+        "kind": "zip",
+        "pinned": {
+          "tag": "v1.2.2",
+          "sha256": "2e49b96aced578363065e1764ca96eaa5590cb6f7e80efd10e8ce1a08462b933"
+        }
+      },
+      {
+        "os": "macos",
+        "arch": "universal",
+        "pattern": "^Zelda64Recompiled-.*-macOS\\.zip$",
+        "kind": "app-zip",
+        "pinned": {
+          "tag": "v1.2.2",
+          "sha256": "f369815d7ba2a1139a6fab8a0aa51c52e5f064dcfcce649eb888fdef9f648689"
+        }
+      }
+    ]
+  },
+  "romSetup": { "type": "in-app-prompt" },
+  "mods": {
+    "supported": true,
+    "fileTypes": [".nrm"],
+    "sources": ["https://thunderstore.io/c/zelda-64-recompiled/"]
+  },
+  "compatibility": {
+    "windows": "playable",
+    "linux": "playable",
+    "macos": "playable",
+    "steamdeck": "playable"
+  },
+  "verification": {
+    "status": "unverified",
+    "notes": "Example. Upstream accepts only the US ROM (other byte orders auto-converted). SHA-1 is the NTSC-U 1.0 hash published by 2ship2harkinian; confirm against Zelda64Recomp source. Release digests from GitHub API (v1.2.2)."
+  }
+}

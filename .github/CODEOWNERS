@@ -1,0 +1,7 @@
+# Maintainers review everything; security-sensitive paths are listed explicitly.
+* @DrummingBird1
+/catalog/ @DrummingBird1
+/src-tauri/src/ @DrummingBird1
+/src-tauri/capabilities/ @DrummingBird1
+/src-tauri/permissions/ @DrummingBird1
+/.github/ @DrummingBird1

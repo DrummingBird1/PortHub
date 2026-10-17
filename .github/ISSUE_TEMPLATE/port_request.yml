@@ -1,0 +1,20 @@
+name: Port request
+description: Suggest a native PC port to add to the catalog
+labels: [catalog]
+body:
+  - type: input
+    id: repo
+    attributes: { label: Official GitHub repo, placeholder: "owner/repo" }
+    validations: { required: true }
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Requirements
+      options:
+        - label: The port publishes official builds on GitHub Releases
+          required: true
+        - label: The builds contain no ROM data or copyrighted game assets
+          required: true
+  - type: textarea
+    id: notes
+    attributes: { label: Notes, description: "License, supported OSes, how ROM setup works." }

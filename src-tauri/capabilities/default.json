@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Minimal capability: the main window may only call PortHub's own commands. No fs, shell, http, opener, event or dialog permissions are exposed to the webview; network, files, dialogs and process launch all happen in Rust, keyed by catalog port id.",
+  "windows": ["main"],
+  "permissions": [
+    "allow-load-catalog",
+    "allow-pick-and-hash-rom",
+    "allow-get-install-status",
+    "allow-install-port",
+    "allow-check-update",
+    "allow-launch-port",
+    "allow-mods",
+    "allow-add-to-steam"
+  ]
+}

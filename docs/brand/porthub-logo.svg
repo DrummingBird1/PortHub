@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PortHub logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bg)"/>
+  <!-- sail = play triangle -->
+  <path d="M214 96 L214 268 L362 268 Z" fill="#ffffff"/>
+  <path d="M196 120 L196 268 L120 268 Z" fill="#ffffff" opacity="0.75"/>
+  <!-- hull -->
+  <path d="M104 290 H408 L372 344 H140 Z" fill="#ffffff"/>
+  <!-- dock / water lines -->
+  <rect x="88" y="372" width="336" height="18" rx="9" fill="#ffffff" opacity="0.9"/>
+  <rect x="136" y="390" width="18" height="48" rx="6" fill="#ffffff" opacity="0.9"/>
+  <rect x="247" y="390" width="18" height="48" rx="6" fill="#ffffff" opacity="0.9"/>
+  <rect x="358" y="390" width="18" height="48" rx="6" fill="#ffffff" opacity="0.9"/>
+</svg>

@@ -1,0 +1,39 @@
+[[permission]]
+identifier = "allow-load-catalog"
+description = "Read and validate the bundled local catalog."
+commands.allow = ["load_catalog"]
+
+[[permission]]
+identifier = "allow-pick-and-hash-rom"
+description = "Open a native file picker (from Rust) and hash the chosen file locally."
+commands.allow = ["pick_and_hash_rom"]
+
+[[permission]]
+identifier = "allow-get-install-status"
+description = "Read the installed version record of a catalog port."
+commands.allow = ["get_install_status"]
+
+[[permission]]
+identifier = "allow-install-port"
+description = "Download a catalog port from its official GitHub Releases, verify checksums and install it (all in Rust)."
+commands.allow = ["install_port"]
+
+[[permission]]
+identifier = "allow-check-update"
+description = "Compare the installed version with the latest official release."
+commands.allow = ["check_update"]
+
+[[permission]]
+identifier = "allow-launch-port"
+description = "Start an installed port's executable from its own install folder."
+commands.allow = ["launch_port"]
+
+[[permission]]
+identifier = "allow-mods"
+description = "List, install (official pinned releases), add local files (Rust-side picker), enable/disable and uninstall mods of an installed port."
+commands.allow = ["list_mods", "install_catalog_mod", "add_local_mod", "set_mod_enabled", "uninstall_mod"]
+
+[[permission]]
+identifier = "allow-add-to-steam"
+description = "Add an installed port as a non-Steam shortcut (only when Steam is closed; backs up shortcuts.vdf)."
+commands.allow = ["add_to_steam"]

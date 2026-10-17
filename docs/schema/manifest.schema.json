@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/launcher/manifest.schema.json",
+  "title": "Port manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "game",
+    "repo",
+    "license",
+    "romRequirements",
+    "releases",
+    "romSetup",
+    "verification"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "game": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "console"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "console": {
+          "enum": ["n64", "gamecube", "ps1", "ps2", "snes", "gba", "nds", "wii", "other"]
+        }
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "repo": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+      "description": "Official GitHub owner/repo. Downloads are only allowed from its Releases."
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri"
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX id, or 'NOASSERTION' if not detected (reviewer must confirm)."
+    },
+    "romRequirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "hashes"],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "format": {
+            "enum": ["z64", "n64", "v64", "iso", "bin-cue", "gcm", "other"]
+          },
+          "recommended": {
+            "type": "boolean"
+          },
+          "hashes": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "sha1": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "md5": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{32}$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "releases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel", "assets"],
+      "properties": {
+        "channel": {
+          "enum": ["latest", "prerelease", "tag"]
+        },
+        "tag": {
+          "type": "string"
+        },
+        "assets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["os", "arch", "pattern", "kind"],
+            "properties": {
+              "os": {
+                "enum": ["windows", "linux", "macos"]
+              },
+              "arch": {
+                "enum": ["x64", "x86", "arm64", "universal"]
+              },
+              "pattern": {
+                "type": "string",
+                "description": "Regex matched against the release asset name."
+              },
+              "kind": {
+                "enum": ["zip", "tar.gz", "appimage", "flatpak-bundle", "app-zip", "exe"]
+              },
+              "executable": {
+                "type": "string",
+                "description": "Path of the launch target inside the extracted asset."
+              },
+              "pinned": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["tag", "sha256"],
+                "description": "Reviewed known-good version. Its checksum must match the GitHub asset digest.",
+                "properties": {
+                  "tag": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "romSetup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "description": "Declarative only. Arbitrary scripts are not allowed.",
+      "properties": {
+        "type": {
+          "enum": ["in-app-prompt", "copy-to-path", "port-tool", "build-from-source"]
+        },
+        "targetPath": {
+          "type": "string",
+          "description": "For copy-to-path, e.g. data/pd.ntsc-final.z64"
+        },
+        "tool": {
+          "type": "string",
+          "description": "For port-tool: executable shipped in the official release."
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "generatedFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Files produced locally, e.g. oot.o2r. Never uploaded."
+        },
+        "dataDir": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": ["windows", "linux", "macos"]
+          }
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mods": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "supported": {
+          "type": "boolean"
+        },
+        "folder": {
+          "type": "string",
+          "description": "Mod folder relative to the port's install dir (e.g. \"mods\")."
+        },
+        "fileTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "catalog": {
+          "type": "array",
+          "description": "Optional mods/texture packs from their own official GitHub Releases. Must contain no copyrighted game assets and be freely distributable; every entry is pinned.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "author",
+              "repo",
+              "assetPattern",
+              "kind",
+              "pinned",
+              "license",
+              "portVersions"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "author": {
+                "type": "string",
+                "minLength": 1
+              },
+              "repo": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+              },
+              "assetPattern": {
+                "type": "string",
+                "description": "Regex matched against the release asset name; exactly one asset must match."
+              },
+              "kind": {
+                "enum": ["file", "zip"]
+              },
+              "pinned": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["tag", "sha256"],
+                "properties": {
+                  "tag": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              },
+              "license": {
+                "type": "string"
+              },
+              "portVersions": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                },
+                "description": "Port release tags this mod supports, or \"*\"."
+              },
+              "target": {
+                "type": "string",
+                "description": "Folder relative to the install dir; defaults to mods.folder."
+              }
+            }
+          }
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["verified", "playable", "issues", "unsupported", "untested"]
+      },
+      "propertyNames": {
+        "enum": ["windows", "linux", "macos", "steamdeck"]
+      }
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "icon": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": ["verified", "community", "unverified"]
+        },
+        "reviewedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reviewedAt": {
+          "type": "string",
+          "format": "date"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

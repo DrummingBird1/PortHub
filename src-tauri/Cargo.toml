@@ -1,0 +1,54 @@
+[package]
+name = "porthub"
+version = "0.0.1"
+description = "Launcher for native PC ports of console games"
+edition = "2021"
+rust-version = "1.85"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/DrummingBird1/PortHub"
+publish = false
+
+[lib]
+name = "porthub_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha1 = "0.10"
+sha2 = "0.10"
+md-5 = "0.10"
+hex = "0.4"
+jsonschema = { version = "0.33", default-features = false }
+thiserror = "2"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream", "json"] }
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+zip = { version = "2", default-features = false, features = ["deflate"] }
+regex = "1"
+flate2 = "1"
+tar = { version = "0.4", default-features = false }
+crc32fast = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

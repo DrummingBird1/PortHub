@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "2ship2harkinian",
+  "name": "2 Ship 2 Harkinian",
+  "game": { "title": "The Legend of Zelda: Majora's Mask", "console": "n64" },
+  "description": "PC port of Majora's Mask built on libultraship. Generates its .o2r asset archive locally from your own ROM.",
+  "repo": "2ship2harkinian/2ship2harkinian",
+  "license": "CC0-1.0",
+  "romRequirements": [
+    {
+      "label": "NTSC-U 1.0",
+      "format": "z64",
+      "recommended": true,
+      "hashes": { "sha1": "d6133ace5afaa0882cf214cf88daba39e266c078" }
+    },
+    {
+      "label": "NTSC-U GC",
+      "format": "z64",
+      "hashes": { "sha1": "9743aa026e9269b339eb0e3044cd5830a440c1fd" }
+    }
+  ],
+  "releases": {
+    "channel": "latest",
+    "assets": [
+      {
+        "os": "windows",
+        "arch": "x64",
+        "pattern": "^2Ship-.*-Win64\\.zip$",
+        "kind": "zip",
+        "executable": "2ship.exe",
+        "pinned": {
+          "tag": "5.0.1",
+          "sha256": "a46664a01623ad5d7cc82d29a9889699f6a98c9501c7a959a089f34380c1f078"
+        }
+      },
+      {
+        "os": "linux",
+        "arch": "x64",
+        "pattern": "^2Ship-.*-Linux\\.zip$",
+        "kind": "zip",
+        "executable": "2ship.appimage",
+        "pinned": {
+          "tag": "5.0.1",
+          "sha256": "6cdd4fe06f3f9b095e99c86fef70b9265cc921fb6faa7ba1e18e94e90ed0b345"
+        }
+      },
+      {
+        "os": "macos",
+        "arch": "universal",
+        "pattern": "^2Ship-.*-Mac\\.zip$",
+        "kind": "app-zip",
+        "executable": "2ship.app",
+        "pinned": {
+          "tag": "5.0.1",
+          "sha256": "b6019b4339d06ce0a476299a5be7b35629dff2fb779acb3da219da3cfcf1f84a"
+        }
+      }
+    ]
+  },
+  "romSetup": { "type": "in-app-prompt", "generatedFiles": ["mm.o2r"] },
+  "mods": { "supported": true, "folder": "mods", "fileTypes": [".o2r", ".otr"] },
+  "compatibility": {
+    "windows": "playable",
+    "linux": "playable",
+    "macos": "untested",
+    "steamdeck": "untested"
+  },
+  "verification": {
+    "status": "unverified",
+    "notes": "Example. Hashes from upstream docs/supportedHashes.json; release digests from GitHub API (5.0.1, 2026-10-17). Generated file name not yet confirmed."
+  }
+}

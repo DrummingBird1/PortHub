@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "id": "ship-of-harkinian",
+  "name": "Ship of Harkinian",
+  "game": { "title": "The Legend of Zelda: Ocarina of Time", "console": "n64" },
+  "description": "PC port of OoT built on libultraship. Generates oot.o2r locally from your own ROM.",
+  "repo": "HarbourMasters/Shipwright",
+  "homepage": "https://www.shipofharkinian.com",
+  "license": "NOASSERTION",
+  "romRequirements": [
+    {
+      "label": "NTSC 1.0 (US)",
+      "format": "z64",
+      "hashes": { "sha1": "ad69c91157f6705e8ab06c79fe08aad47bb57ba7" }
+    },
+    {
+      "label": "NTSC 1.1 (US)",
+      "format": "z64",
+      "hashes": { "sha1": "d3ecb253776cd847a5aa63d859d8c89a2f37b364" }
+    },
+    {
+      "label": "NTSC 1.2 (US)",
+      "format": "z64",
+      "hashes": { "sha1": "41b3bdc48d98c48529219919015a1af22f5057c2" }
+    },
+    {
+      "label": "PAL 1.0",
+      "format": "z64",
+      "hashes": { "sha1": "328a1f1beba30ce5e178f031662019eb32c5f3b5" }
+    },
+    {
+      "label": "PAL GC",
+      "format": "z64",
+      "hashes": { "sha1": "0227d7c0074f2d0ac935631990da8ec5914597b4" }
+    }
+  ],
+  "releases": {
+    "channel": "latest",
+    "assets": [
+      {
+        "os": "windows",
+        "arch": "x64",
+        "pattern": "^SoH-.*-Win64\\.zip$",
+        "kind": "zip",
+        "executable": "soh.exe",
+        "pinned": {
+          "tag": "9.3.0",
+          "sha256": "bf46cfc41be17f3b63901db46dac46ac2a63ed3851aa13e3ba6c9ec5d0ac2632"
+        }
+      },
+      {
+        "os": "linux",
+        "arch": "x64",
+        "pattern": "^SoH-.*\\.appimage$",
+        "kind": "appimage",
+        "pinned": {
+          "tag": "9.3.0",
+          "sha256": "8507bb70413e130e452ebaf5f156bfd78013ee0144364b7968680e8cf064a0fa"
+        }
+      },
+      {
+        "os": "macos",
+        "arch": "universal",
+        "pattern": "^SoH-.*-Mac\\.zip$",
+        "kind": "app-zip",
+        "executable": "soh.app",
+        "pinned": {
+          "tag": "9.3.0",
+          "sha256": "dc4c146f469c11cb8c87cbf6f541721b4a65887a1f0fae1407785c7b6e600110"
+        }
+      }
+    ]
+  },
+  "romSetup": {
+    "type": "in-app-prompt",
+    "generatedFiles": ["oot.o2r", "oot-mq.o2r"],
+    "dataDir": { "linux": "~/.local/share/soh" },
+    "env": { "SHIP_HOME": "{installDir}/data" }
+  },
+  "mods": { "supported": true, "folder": "mods", "fileTypes": [".otr", ".o2r"] },
+  "compatibility": {
+    "windows": "verified",
+    "linux": "playable",
+    "macos": "untested",
+    "steamdeck": "untested"
+  },
+  "verification": {
+    "status": "unverified",
+    "notes": "Example only. Hashes taken from upstream docs/supportedHashes.json (partial list). License must be confirmed."
+  }
+}
