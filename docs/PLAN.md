@@ -1,6 +1,6 @@
 # PLAN
 
-## Status: 0.0.1 early preview
+## Status: 0.0.2 early preview
 
 Public at <https://github.com/DrummingBird1/PortHub>. Stack: Tauri 2 + React/TypeScript with a Rust core.
 
