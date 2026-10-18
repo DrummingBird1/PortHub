@@ -41,12 +41,16 @@ A change is "done" only when all of these pass and you report them:
 ```
 catalog/            port manifests (one JSON per port), bundled as app resources
 docs/schema/        manifest JSON Schema (source of truth); docs/examples/ holds the reference example
-src/                React + TS UI (lib/ = types, API wrappers, helpers; components/ = views)
+src/                React + TS UI (lib/ = types, API wrappers, markdown (sanitized), spatial/gamepad nav, progress;
+                    components/ = Library, GamePage, ModsPanel, Onboarding, SettingsPage, AboutPage, Toasts, CoverArt;
+                    i18n/ = en.ts + he.ts (typed keys, RTL); tests are *.test.ts(x) with Vitest + Testing Library)
 src/lib/catalogValidation.ts   Ajv validation used ONLY by tests/CI (Node)
 src-tauri/src/      Rust: lib.rs (commands), catalog.rs (load + validate), rom.rs (hash + match),
                     manifest.rs (typed fields), github.rs (release API, asset selection, verify, version compare),
                     extract.rs (safe zip/tar.gz), install.rs (download, install, upgrade, launch),
-                    mods.rs (mods), steam.rs (shortcuts.vdf)
+                    mods.rs (mods), steam.rs (shortcuts.vdf), settings.rs (settings.json, library folder)
+                    Commands added for the UI: get_settings, save_prefs, choose_library_dir, app_info,
+                    uninstall_port, open_install_folder, open_link (https://github.com/ only)
 src-tauri/tests/fixtures/  recorded GitHub API JSON (no binaries)
 docs/brand/         logo SVG (source for `npx tauri icon`)
 src-tauri/capabilities/default.json   webview permissions (keep minimal)

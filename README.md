@@ -16,7 +16,7 @@
 > **Early preview (0.0.1).** It works end to end, but expect rough edges. All catalog entries are marked _Unverified_ until maintainers have tested them.
 
 <p align="center">
-  <img src="docs/screenshots/installed-mods.png" width="820" alt="PortHub showing Ship of Harkinian installed, with mods">
+  <img src="docs/screenshots/library.png" width="820" alt="PortHub library with game cards">
 </p>
 
 ## Bring your own ROM: we never host game files
@@ -25,7 +25,12 @@ PortHub **does not include, download or link to** ROMs, ISOs, BIOS files or game
 
 ## Features
 
-- **Catalog of ports.** Each port has a page with its description, upstream links, license, compatibility, and the game dumps it supports.
+- **Library.** A grid of game cards with search, console and installed filters, and sorting.
+- **Game pages.** A banner with one main button that changes with the state (Install, Play, Update). Install progress shows speed and time left. Tabs cover Overview, Mods, Updates (the changelog) and Files & advanced.
+- **First-run guide.** Explains bring-your-own-ROM and lets you choose the library folder.
+- **Settings.** Library folder, light/dark/system theme, language (English or Hebrew, right-to-left), and update checks on startup.
+- **Uninstall.** Removes a port. You can keep your saves, configs and mods, which are moved to the library's `saved-data` folder.
+- **Keyboard and gamepad.** Arrow keys or the D-pad move focus, A selects and B goes back. Built for Steam Deck (not yet tested on real hardware).
 - **ROM check.** Hashes your dump locally (SHA-1/MD5/SHA-256) and tells you which supported version it matches.
 - **Verified install.** Picks the right release asset for your OS. The SHA-256 must match GitHub's published digest, and the reviewed pinned checksum when there is one, or nothing is installed. Archives are extracted safely, with no path traversal and no symlinks.
 - **Updates.** Compares your installed version with the latest release, shows the changelog, and upgrades in one click. Saves, configs and mods are kept.
@@ -33,9 +38,11 @@ PortHub **does not include, download or link to** ROMs, ISOs, BIOS files or game
 - **Add to Steam.** Creates a non-Steam shortcut, with a backup of `shortcuts.vdf`. It only does this while Steam is closed.
 - **Small and locked down.** Tauri 2 with a Rust core. The UI can only call PortHub's own commands, and the CSP is strict. No telemetry.
 
-| Update available                                           | Linux                                           |
-| ---------------------------------------------------------- | ----------------------------------------------- |
-| ![Update available](docs/screenshots/update-available.png) | ![PortHub on Linux](docs/screenshots/linux.png) |
+| Game page                                           | Updates                                                   |
+| --------------------------------------------------- | --------------------------------------------------------- |
+| ![Installing](docs/screenshots/game-installing.png) | ![Updates](docs/screenshots/updates.png)                  |
+| ![First run](docs/screenshots/onboarding.png)       | ![Uninstall](docs/screenshots/uninstall.png)              |
+| ![Hebrew (RTL)](docs/screenshots/hebrew-rtl.png)    | ![Settings on Linux](docs/screenshots/settings-linux.png) |
 
 ## Supported ports
 
