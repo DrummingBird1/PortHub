@@ -9,6 +9,10 @@ import type {
   RomCheckResult,
   RomRequirement,
   UpdateInfo,
+  AppInfo,
+  Prefs,
+  SettingsView,
+  UninstallResult,
 } from "./types";
 
 export interface CatalogResponse {
@@ -66,3 +70,23 @@ export const uninstallMod = (portId: string, modId: string): Promise<void> =>
 
 export const addToSteam = (portId: string): Promise<SteamResult> =>
   invoke<SteamResult>("add_to_steam", { portId });
+
+export const getSettings = (): Promise<SettingsView> => invoke<SettingsView>("get_settings");
+
+export const savePrefs = (prefs: Prefs): Promise<SettingsView> =>
+  invoke<SettingsView>("save_prefs", { prefs });
+
+/** Opens a native folder picker in Rust. `reset` returns to the default folder. */
+export const chooseLibraryDir = (reset: boolean): Promise<SettingsView> =>
+  invoke<SettingsView>("choose_library_dir", { reset });
+
+export const appInfo = (): Promise<AppInfo> => invoke<AppInfo>("app_info");
+
+export const uninstallPort = (portId: string, keepUserFiles: boolean): Promise<UninstallResult> =>
+  invoke<UninstallResult>("uninstall_port", { portId, keepUserFiles });
+
+export const openInstallFolder = (portId: string): Promise<void> =>
+  invoke<undefined>("open_install_folder", { portId });
+
+/** Rust only opens https://github.com/ links. */
+export const openLink = (url: string): Promise<void> => invoke<undefined>("open_link", { url });

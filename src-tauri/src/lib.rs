@@ -8,6 +8,7 @@ mod install;
 mod manifest;
 mod mods;
 mod rom;
+mod settings;
 mod steam;
 
 use serde::Serialize;
@@ -54,8 +55,191 @@ fn manifest_by_id(app: &AppHandle, id: &str) -> Result<manifest::Manifest, Strin
     serde_json::from_value(v).map_err(|e| e.to_string())
 }
 
-fn data_dir(app: &AppHandle) -> Result<PathBuf, String> {
+fn config_dir(app: &AppHandle) -> Result<PathBuf, String> {
+    app.path().app_config_dir().map_err(|e| e.to_string())
+}
+
+fn default_library(app: &AppHandle) -> Result<PathBuf, String> {
     app.path().app_local_data_dir().map_err(|e| e.to_string())
+}
+
+/// Library root (contains `ports/`): the user's chosen folder or the default app data folder.
+fn data_dir(app: &AppHandle) -> Result<PathBuf, String> {
+    let s = settings::load(&config_dir(app)?);
+    Ok(settings::library_root(&s, &default_library(app)?))
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct SettingsView {
+    #[serde(flatten)]
+    settings: settings::Settings,
+    /// Effective library folder.
+    library_path: PathBuf,
+    default_library_path: PathBuf,
+    /// The library folder can only change while no port is installed.
+    library_locked: bool,
+}
+
+fn settings_view(app: &AppHandle) -> Result<SettingsView, String> {
+    let s = settings::load(&config_dir(app)?);
+    let def = default_library(app)?;
+    let lib = settings::library_root(&s, &def);
+    Ok(SettingsView {
+        library_locked: settings::has_installs(&lib),
+        library_path: lib,
+        default_library_path: def,
+        settings: s,
+    })
+}
+
+#[allow(clippy::needless_pass_by_value)]
+#[tauri::command]
+fn get_settings(app: AppHandle) -> Result<SettingsView, String> {
+    settings_view(&app)
+}
+
+#[allow(clippy::needless_pass_by_value)]
+#[tauri::command]
+fn save_prefs(app: AppHandle, prefs: settings::Prefs) -> Result<SettingsView, String> {
+    let cfg = config_dir(&app)?;
+    let mut s = settings::load(&cfg);
+    settings::apply_prefs(&mut s, prefs);
+    settings::save(&cfg, &s)?;
+    settings_view(&app)
+}
+
+/// Native folder picker (Rust side). `reset` = go back to the default folder.
+/// Refused while ports are installed in the current library.
+#[tauri::command]
+async fn choose_library_dir(app: AppHandle, reset: bool) -> Result<SettingsView, String> {
+    let cfg = config_dir(&app)?;
+    let mut s = settings::load(&cfg);
+    let current = settings::library_root(&s, &default_library(&app)?);
+    if settings::has_installs(&current) {
+        return Err("uninstall your ports before changing the library folder".into());
+    }
+    if reset {
+        s.library_dir = None;
+    } else {
+        let Some(picked) = app
+            .dialog()
+            .file()
+            .set_title("Choose the PortHub library folder")
+            .blocking_pick_folder()
+        else {
+            return settings_view(&app);
+        };
+        let dir = picked.into_path().map_err(|e| e.to_string())?;
+        settings::validate_library_dir(&dir)?;
+        s.library_dir = Some(dir);
+    }
+    settings::save(&cfg, &s)?;
+    settings_view(&app)
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct AppInfo {
+    version: String,
+    os: &'static str,
+    arch: &'static str,
+}
+
+#[allow(clippy::needless_pass_by_value)]
+#[tauri::command]
+fn app_info(app: AppHandle) -> AppInfo {
+    AppInfo {
+        version: app.package_info().version.to_string(),
+        os: std::env::consts::OS,
+        arch: std::env::consts::ARCH,
+    }
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct UninstallResult {
+    kept_files_path: Option<PathBuf>,
+}
+
+#[tauri::command]
+async fn uninstall_port(
+    app: AppHandle,
+    busy: State<'_, Busy>,
+    port_id: String,
+    keep_user_files: bool,
+) -> Result<UninstallResult, String> {
+    let m = manifest_by_id(&app, &port_id)?;
+    if !busy
+        .0
+        .lock()
+        .map_err(|e| e.to_string())?
+        .insert(m.id.clone())
+    {
+        return Err("another operation for this port is running".into());
+    }
+    let data = data_dir(&app)?;
+    let id = m.id.clone();
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        install::uninstall(&data, &id, keep_user_files)
+    })
+    .await
+    .map_err(|e| e.to_string())
+    .and_then(|r| r);
+    busy.0.lock().map_err(|e| e.to_string())?.remove(&m.id);
+    result.map(|kept_files_path| UninstallResult { kept_files_path })
+}
+
+/// Only plain `https://github.com/...` links may be opened (repo, releases, issues).
+fn allowed_link(url: &str) -> bool {
+    url.strip_prefix("https://github.com/").is_some_and(|rest| {
+        !rest.is_empty()
+            && rest
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || "-._~/?=&#%+".contains(c))
+    })
+}
+
+/// Opens an allow-listed GitHub link in the default browser.
+#[allow(clippy::needless_pass_by_value)]
+#[tauri::command]
+fn open_link(url: String) -> Result<(), String> {
+    if !allowed_link(&url) {
+        return Err("only github.com links can be opened".into());
+    }
+    let mut cmd = if cfg!(windows) {
+        let mut c = std::process::Command::new("rundll32");
+        c.arg("url.dll,FileProtocolHandler");
+        c
+    } else if cfg!(target_os = "macos") {
+        std::process::Command::new("open")
+    } else {
+        std::process::Command::new("xdg-open")
+    };
+    cmd.arg(&url)
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| format!("could not open the link: {e}"))
+}
+
+/// Opens the port's install folder in the system file manager. The path is resolved in Rust.
+#[allow(clippy::needless_pass_by_value)]
+#[tauri::command]
+fn open_install_folder(app: AppHandle, port_id: String) -> Result<(), String> {
+    let m = manifest_by_id(&app, &port_id)?;
+    let dir = install::install_folder(&data_dir(&app)?, &m.id)?;
+    let program = if cfg!(windows) {
+        "explorer"
+    } else if cfg!(target_os = "macos") {
+        "open"
+    } else {
+        "xdg-open"
+    };
+    std::process::Command::new(program)
+        .arg(&dir)
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| format!("could not open the folder: {e}"))
 }
 
 // Tauri injects AppHandle by value.
@@ -266,8 +450,33 @@ pub fn run() {
             add_local_mod,
             set_mod_enabled,
             uninstall_mod,
-            add_to_steam
+            add_to_steam,
+            get_settings,
+            save_prefs,
+            choose_library_dir,
+            app_info,
+            uninstall_port,
+            open_install_folder,
+            open_link
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::allowed_link;
+
+    #[test]
+    fn only_plain_github_links_are_allowed() {
+        assert!(allowed_link("https://github.com/DrummingBird1/PortHub"));
+        assert!(allowed_link("https://github.com/o/r/releases/tag/v1.0"));
+        assert!(!allowed_link("https://github.com/"));
+        assert!(!allowed_link("http://github.com/o/r"));
+        assert!(!allowed_link("https://github.com.evil.example/o"));
+        assert!(!allowed_link("https://evil.example/https://github.com/"));
+        assert!(!allowed_link("https://github.com/o/r\" & calc"));
+        assert!(!allowed_link("https://github.com/o r"));
+        assert!(!allowed_link("file:///etc/passwd"));
+    }
 }

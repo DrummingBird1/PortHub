@@ -37,3 +37,13 @@ commands.allow = ["list_mods", "install_catalog_mod", "add_local_mod", "set_mod_
 identifier = "allow-add-to-steam"
 description = "Add an installed port as a non-Steam shortcut (only when Steam is closed; backs up shortcuts.vdf)."
 commands.allow = ["add_to_steam"]
+
+[[permission]]
+identifier = "allow-settings"
+description = "Read settings, save display preferences, and change the library folder through a Rust-side folder picker (only while nothing is installed)."
+commands.allow = ["get_settings", "save_prefs", "choose_library_dir", "app_info"]
+
+[[permission]]
+identifier = "allow-manage-install"
+description = "Uninstall a catalog port (optionally keeping user files) open its install folder in the system file manager, and open allow-listed https://github.com/ links in the browser."
+commands.allow = ["uninstall_port", "open_install_folder", "open_link"]

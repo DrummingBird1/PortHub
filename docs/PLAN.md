@@ -35,10 +35,13 @@ Public at <https://github.com/DrummingBird1/PortHub>. Stack: Tauri 2 + React/Typ
 - Code signing: skipped for now; the release notes explain SmartScreen.
 - Updater: not enabled yet. When it is, the Tauri updater private key stays with the maintainer and is stored only as a release-environment secret. It is never committed.
 
+## Done after 0.0.1 (UI redesign)
+
+- Library grid, game pages with tabs, first-run guide, settings (library folder, theme, language), About, uninstall (with an option to keep user files), toasts, keyboard and gamepad focus, English and Hebrew (RTL), and sanitized changelog markdown.
+
 ## Next
 
 - Steam Deck hardware test (Game Mode).
-- Strip HTML/markdown from changelogs.
 - Freely distributable catalog mods (Thunderstore for Recomp).
 - Signed self-updater; code signing.
 - **Split the catalog** into its own repo (`catalog/` → separate repo with CC0, a signed `index.json` built on merge, and a stricter CI that checks the repo, digests and licenses). The app would then fetch the signed index and fall back to the bundled snapshot.

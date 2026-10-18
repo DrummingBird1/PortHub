@@ -122,3 +122,30 @@ export interface SteamResult {
   appid: number;
   backups: string[];
 }
+
+export type Theme = "system" | "light" | "dark";
+export type Language = "en" | "he";
+
+export interface Prefs {
+  theme: Theme;
+  language: Language;
+  checkUpdatesOnStartup: boolean;
+  onboarded: boolean;
+}
+
+export interface SettingsView extends Prefs {
+  libraryDir: string | null;
+  libraryPath: string;
+  defaultLibraryPath: string;
+  libraryLocked: boolean;
+}
+
+export interface AppInfo {
+  version: string;
+  os: string;
+  arch: string;
+}
+
+export interface UninstallResult {
+  keptFilesPath: string | null;
+}
