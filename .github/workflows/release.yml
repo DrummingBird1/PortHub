@@ -62,7 +62,11 @@ jobs:
         run: |
           version=$(gh api repos/${{ github.repository }}/contents/package.json -q .content | base64 -d | jq -r .version)
           mkdir assets && cd assets
-          gh release download "v$version" -R ${{ github.repository }} -p '*.exe' -p '*.deb' -p '*.AppImage'
+          gh release download "v$version" -R ${{ github.repository }} -p "PortHub_${version}_*"
+          # Stable names so README links to /releases/latest/download/<name> keep working.
+          cp PortHub_${version}_x64-setup.exe PortHub-windows-x64-setup.exe
+          cp PortHub_${version}_amd64.AppImage PortHub-linux-x86_64.AppImage
+          cp PortHub_${version}_amd64.deb PortHub-linux-amd64.deb
           sha256sum * > SHA256SUMS
           cat SHA256SUMS
-          gh release upload "v$version" SHA256SUMS --clobber -R ${{ github.repository }}
+          gh release upload "v$version" PortHub-windows-x64-setup.exe PortHub-linux-x86_64.AppImage PortHub-linux-amd64.deb SHA256SUMS --clobber -R ${{ github.repository }}
