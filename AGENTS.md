@@ -86,3 +86,9 @@ src-tauri/permissions/app.toml        per-command permissions
 - Steam: refuse to write while Steam is running; always back up `shortcuts.vdf` before writing; root map 0x08 = EOF.
 - Linux AppImage build in a container needs `APPIMAGE_EXTRACT_AND_RUN=1` and the `file` command.
 - Releases: push a `v*` tag; `.github/workflows/release.yml` builds a draft pre-release that a maintainer publishes.
+
+## Working copy and sync
+
+- The canonical working copy is the maintainer's local clone, kept in sync with `origin/main` on GitHub. Other copies (scratch or CI machines) must be fresh clones; never treat an untracked copy as the source of truth.
+- Pull before work, keep `git status` clean, and push only commits that pass `npm run check` and the cargo checks. Never force-push `main`.
+- Headless Linux (Xvfb, no GPU): if the window renders black, run with `WEBKIT_DISABLE_COMPOSITING_MODE=1`.

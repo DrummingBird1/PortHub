@@ -121,6 +121,8 @@ Project layout: `src/` is the React UI, `src-tauri/src/` is the Rust core, `cata
 
 **Does PortHub phone home?** No. It only contacts `api.github.com` and GitHub's download hosts, and only when you install or check for updates.
 
+**The window is blank or black on Linux.** Some GPU/driver setups (and VMs) have WebKitGTK compositing issues. Start PortHub with `WEBKIT_DISABLE_COMPOSITING_MODE=1`.
+
 **macOS?** Not yet.
 
 **Is the Steam Deck supported?** The Linux build works. Game Mode and Deck hardware haven't been tested yet.
