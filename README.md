@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey" alt="Platforms">
 </p>
 
-> **Early preview (0.0.1).** It works end to end, but expect rough edges. All catalog entries are marked _Unverified_ until maintainers have tested them.
+> **Early preview (0.0.2).** It works end to end, but expect rough edges. All catalog entries are marked _Unverified_ until maintainers have tested them.
 
 <p align="center">
   <img src="docs/screenshots/library.png" width="820" alt="PortHub library with game cards">
@@ -58,14 +58,14 @@ All credit for these ports goes to their upstream teams. PortHub is an unofficia
 
 Download from [Releases](https://github.com/DrummingBird1/PortHub/releases):
 
-- **Windows:** `PortHub_0.0.1_x64-setup.exe`. The installer is **not code-signed yet**, so SmartScreen may warn you. Click _More info_ → _Run anyway_.
-- **Linux / Steam Deck (desktop mode):** `PortHub_0.0.1_amd64.AppImage` (`chmod +x`, then run it) or `PortHub_0.0.1_amd64.deb`.
+- **Windows:** `PortHub_0.0.2_x64-setup.exe`. The installer is **not code-signed yet**, so SmartScreen may warn you. Click _More info_ → _Run anyway_.
+- **Linux / Steam Deck (desktop mode):** `PortHub_0.0.2_amd64.AppImage` (`chmod +x`, then run it) or `PortHub_0.0.2_amd64.deb`.
 
 Check your download against `SHA256SUMS`:
 
 ```sh
 sha256sum -c SHA256SUMS --ignore-missing          # Linux
-Get-FileHash .\PortHub_0.0.1_x64-setup.exe        # Windows PowerShell
+Get-FileHash .\PortHub_0.0.2_x64-setup.exe        # Windows PowerShell
 ```
 
 ## Quick start

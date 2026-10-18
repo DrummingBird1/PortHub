@@ -2560,7 +2560,7 @@ dependencies = [
 
 [[package]]
 name = "porthub"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "crc32fast",
  "flate2",
