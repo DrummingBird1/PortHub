@@ -11,6 +11,8 @@
     "allow-check-update",
     "allow-launch-port",
     "allow-mods",
-    "allow-add-to-steam"
+    "allow-add-to-steam",
+    "allow-settings",
+    "allow-manage-install"
   ]
 }

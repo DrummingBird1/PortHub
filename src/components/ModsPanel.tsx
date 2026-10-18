@@ -1,112 +1,131 @@
 import { useCallback, useEffect, useState } from "react";
+import { useI18n } from "../i18n";
 import { addLocalMod, installCatalogMod, listMods, setModEnabled, uninstallMod } from "../lib/api";
-import { progressLabel } from "../lib/format";
-import type { InstallProgress, Manifest, ModsView } from "../lib/types";
+import type { Manifest, ModsView } from "../lib/types";
+import { Icon } from "./Icon";
+import { errorText, useToast } from "./Toasts";
 
 export function ModsPanel({ manifest: m, installed }: { manifest: Manifest; installed: boolean }) {
+  const { t } = useI18n();
+  const toast = useToast();
   const [view, setView] = useState<ModsView | null>(null);
   const [busy, setBusy] = useState(false);
-  const [progress, setProgress] = useState<InstallProgress | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
     listMods(m.id)
       .then(setView)
       .catch((e: unknown) => {
-        setError(String(e));
+        toast("error", t("toast.error"), errorText(e));
       });
-  }, [m.id]);
+  }, [m.id, toast, t]);
 
   useEffect(() => {
     refresh();
   }, [refresh, installed]);
 
-  const run = async (action: () => Promise<unknown>) => {
+  const run = async (action: () => Promise<unknown>, success?: string) => {
     setBusy(true);
-    setError(null);
     try {
-      await action();
+      const r = await action();
+      if (success && r !== null) toast("success", success);
     } catch (e: unknown) {
-      setError(String(e));
+      toast("error", t("toast.error"), errorText(e));
     } finally {
       setBusy(false);
-      setProgress(null);
       refresh();
     }
   };
 
-  if (!view?.supported) return null;
+  if (!view) return <p className="muted">{t("common.loading")}</p>;
+  if (!view.supported)
+    return (
+      <div className="empty-state small">
+        <Icon name="info" size={32} />
+        <p>{t("mods.unsupported")}</p>
+      </div>
+    );
 
   return (
-    <section className="mods">
-      <h2>Mods &amp; texture packs</h2>
-      <p className="muted small">
-        Files go into the port&apos;s <code>{view.folder}</code> folder ({view.fileTypes.join(", ")}
-        ). Disabled mods are parked outside it. Never add packs containing ripped game assets you
-        don&apos;t own.
-      </p>
-      {!installed && <p className="small">Install the port to manage mods.</p>}
-
-      {view.installed.length > 0 && (
-        <table className="mod-table">
-          <tbody>
+    <div className="mods">
+      <section className="panel">
+        <div className="row">
+          <div>
+            <h2>{t("mods.title")}</h2>
+            <p className="muted small">
+              {t("mods.hint", { folder: view.folder ?? "mods", types: view.fileTypes.join(", ") })}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn primary"
+            disabled={busy || !installed}
+            onClick={() => void run(() => addLocalMod(m.id), t("toast.modAdded"))}
+          >
+            <Icon name="upload" /> {t("mods.addLocal")}
+          </button>
+        </div>
+        {!installed && <p className="notice">{t("mods.installFirst")}</p>}
+        {installed && view.installed.length === 0 && <p className="muted">{t("mods.empty")}</p>}
+        {view.installed.length > 0 && (
+          <ul className="mod-list">
             {view.installed.map((e) => (
-              <tr key={e.id}>
-                <td>
-                  {e.name}
-                  <span className="tag small">{e.source}</span>
-                </td>
-                <td className="small">{e.enabled ? "enabled" : "disabled"}</td>
-                <td>
-                  <button
-                    type="button"
+              <li key={e.id} className={e.enabled ? "" : "is-disabled"}>
+                <div className="mod-name">
+                  <strong dir="auto">{e.name}</strong>
+                  <span className="chip chip-small">
+                    {e.source === "local" ? t("mods.local") : t("mods.catalog")}
+                  </span>
+                </div>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    role="switch"
+                    checked={e.enabled}
                     disabled={busy}
-                    onClick={() => void run(() => setModEnabled(m.id, e.id, !e.enabled))}
-                  >
-                    {e.enabled ? "Disable" : "Enable"}
-                  </button>{" "}
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => void run(() => uninstallMod(m.id, e.id))}
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
+                    onChange={() => void run(() => setModEnabled(m.id, e.id, !e.enabled))}
+                  />
+                  <span className="switch-track" aria-hidden="true" />
+                  <span>{e.enabled ? t("mods.enabled") : t("mods.disabled")}</span>
+                </label>
+                <button
+                  type="button"
+                  className="btn ghost"
+                  disabled={busy}
+                  aria-label={`${t("mods.remove")} ${e.name}`}
+                  onClick={() => void run(() => uninstallMod(m.id, e.id))}
+                >
+                  <Icon name="trash" /> {t("mods.remove")}
+                </button>
+              </li>
             ))}
-          </tbody>
-        </table>
-      )}
+          </ul>
+        )}
+      </section>
 
       {view.catalog.length > 0 && (
-        <ul className="mod-catalog">
-          {view.catalog.map((c) => (
-            <li key={c.id}>
-              <strong>{c.name}</strong> by {c.author} · {c.license} · {c.version}{" "}
-              <button
-                type="button"
-                disabled={busy || !installed || c.installed || !c.compatible}
-                onClick={() => void run(() => installCatalogMod(m.id, c.id, setProgress))}
-              >
-                {c.installed ? "Installed" : c.compatible ? "Install" : "Incompatible"}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <section className="panel">
+          <ul className="mod-list">
+            {view.catalog.map((c) => (
+              <li key={c.id}>
+                <div className="mod-name">
+                  <strong>{c.name}</strong>
+                  <span className="small muted">
+                    {c.author} · {c.license} · {c.version}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="btn"
+                  disabled={busy || !installed || c.installed || !c.compatible}
+                  onClick={() => void run(() => installCatalogMod(m.id, c.id, () => undefined))}
+                >
+                  <Icon name="download" /> {c.installed ? t("mods.enabled") : t("action.install")}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
-
-      <div className="actions">
-        <button
-          type="button"
-          disabled={busy || !installed}
-          onClick={() => void run(() => addLocalMod(m.id))}
-        >
-          Add local mod file…
-        </button>
-      </div>
-      {busy && progress && <p className="small">{progressLabel(progress)}</p>}
-      {error && <p className="error">Error: {error}</p>}
-    </section>
+    </div>
   );
 }

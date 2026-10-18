@@ -483,6 +483,44 @@ fn needs_appimage_fallback(path: &Path) -> bool {
         && !Path::new("/dev/fuse").exists()
 }
 
+/// Remove an installed port. With `keep_user_files`, files the user created inside the
+/// install (saves, configs, mods, generated archives; anything not in `files.txt`) are first
+/// moved to `<library>/saved-data/<id>/<timestamp>/`. Returns that folder, if any files were kept.
+///
+/// # Errors
+/// Not installed, or an I/O failure (nothing is deleted unless the backup succeeded).
+pub fn uninstall(data: &Path, id: &str, keep_user_files: bool) -> Result<Option<PathBuf>, String> {
+    let dir = port_dir(data, id);
+    if read_record(data, id).is_none() {
+        return Err("this port is not installed".into());
+    }
+    let mut kept = None;
+    if keep_user_files {
+        let files = read_files_list(data, id).unwrap_or_default();
+        let dest = data.join("saved-data").join(id).join(now().to_string());
+        let n = preserve_user_files(&app_dir(data, id), &files, &dest)
+            .map_err(|e| format!("could not back up your files: {e}"))?;
+        if n > 0 {
+            kept = Some(dest);
+        }
+    }
+    fs::remove_dir_all(&dir).map_err(|e| format!("could not remove the install: {e}"))?;
+    Ok(kept)
+}
+
+/// Folder to show in the file manager: the app folder if present, else the port folder.
+///
+/// # Errors
+/// Not installed.
+pub fn install_folder(data: &Path, id: &str) -> Result<PathBuf, String> {
+    let app = app_dir(data, id);
+    if app.is_dir() {
+        Ok(app)
+    } else {
+        Err("this port is not installed".into())
+    }
+}
+
 /// Spawn the installed port. Returns the process id.
 ///
 /// # Errors
@@ -503,6 +541,24 @@ mod tests {
     use super::*;
     use std::io::Read as _;
     use std::net::TcpListener;
+
+    #[test]
+    fn uninstall_keeps_only_user_files_when_asked() {
+        let data = tempfile::tempdir().unwrap();
+        let pd = port_dir(data.path(), "p");
+        fs::create_dir_all(pd.join("app/saves")).unwrap();
+        fs::write(pd.join("app/game.exe"), b"exe").unwrap();
+        fs::write(pd.join("app/saves/file1.sav"), b"save").unwrap();
+        fs::write(pd.join("files.txt"), "game.exe\n").unwrap();
+        fs::write(pd.join("install.json"), r#"{"tag":"1","assetName":"a","sha256":"x","pinnedOk":true,"executable":null,"installedAt":0,"preservedFiles":0}"#).unwrap();
+        assert!(install_folder(data.path(), "p").is_ok());
+        let kept = uninstall(data.path(), "p", true).unwrap().unwrap();
+        assert!(!pd.exists());
+        assert_eq!(fs::read(kept.join("saves/file1.sav")).unwrap(), b"save");
+        assert!(!kept.join("game.exe").exists());
+        assert!(uninstall(data.path(), "p", false).is_err());
+        assert!(install_folder(data.path(), "p").is_err());
+    }
 
     #[test]
     fn executable_must_stay_inside_install_dir() {

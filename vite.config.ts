@@ -16,5 +16,9 @@ export default defineConfig({
   },
   envPrefix: ["VITE_", "TAURI_ENV_"],
   build: { target: "es2022", sourcemap: false },
-  test: { environment: "node", include: ["src/**/*.test.ts"] },
+  test: {
+    environment: "node",
+    include: ["src/**/*.test.{ts,tsx}"],
+    setupFiles: ["src/test/setup.ts"],
+  },
 });
