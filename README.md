@@ -151,3 +151,9 @@ Project layout: `src/` is the React UI, `src-tauri/src/` is the Rust core, `cata
 ## License
 
 The app is licensed under [GPL-3.0-or-later](LICENSE). The catalog manifests in [`catalog/`](catalog) are released under [CC0-1.0](catalog/LICENSE). Game names and trademarks belong to their owners.
+
+## Support
+
+If this project is useful to you, you can support its development:
+
+[Ko-fi](https://ko-fi.com/idanlights) · [Buy Me a Coffee](https://buymeacoffee.com/MrIdan) · [Patreon](https://www.patreon.com/c/IdanLights)
