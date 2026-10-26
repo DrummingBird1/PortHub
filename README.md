@@ -15,6 +15,8 @@
 
 > **Early preview (0.0.2).** It works end to end, but expect rough edges. All catalog entries are marked _Unverified_ until maintainers have tested them.
 
+🗺 **Planned work: see [ROADMAP.md](ROADMAP.md).**
+
 ## Download
 
 <p align="center">
