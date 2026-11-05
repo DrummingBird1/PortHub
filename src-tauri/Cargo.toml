@@ -28,7 +28,7 @@ jsonschema = { version = "0.33", default-features = false }
 thiserror = "2"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream", "json"] }
 futures-util = { version = "0.3", default-features = false, features = ["std"] }
-zip = { version = "2", default-features = false, features = ["deflate"] }
+zip = { version = "9", default-features = false, features = ["deflate"] }
 regex = "1"
 flate2 = "1"
 tar = { version = "0.4", default-features = false }
